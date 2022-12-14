@@ -31,4 +31,9 @@ export class AppController {
   getMovie(): Promise<any[]>{
     return this.appService.getMovie();
   }
+
+  @Get('/games')
+  getGames(): Promise<any[]>{
+    return this.appService.getGames();
+  }
 }
