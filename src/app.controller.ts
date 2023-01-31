@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Query, Post, Req } from '@nestjs/common';
+import { query } from 'express';
 import { AppService } from './app.service';
 import { myList } from './app.service';
 
@@ -32,8 +33,20 @@ export class AppController {
     return this.appService.getMovie();
   }
 
-  @Get('/games')
-  getGames(): Promise<any[]>{
-    return this.appService.getGames();
+  @Get('/movtest')
+  async getMovieTest(@Query()query): Promise<any[]>{
+    const data =  await this.appService.getMovieTest(query);
+    return data;
   }
+
+  @Get('/search')
+  async searchMovie(@Query()query): Promise<any[]>{
+    const data =  await this.appService.searchMovie(query);
+    return data;
+  }
+
+  // @Get('/games')
+  // getGames(): Promise<any[]>{
+  //   return this.appService.getGames();
+  // }
 }

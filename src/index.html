@@ -1,0 +1,23 @@
+<html>
+
+<head>
+
+</head>
+
+
+<body>
+
+    <input id="movie" type="text">
+    <button type="button" onclick="search();">Search</button>
+    <script>
+        function search() {
+            let inputVal = document.getElementById("movie").value;
+            let query = inputVal.replaceAll(" ", "%20");
+            // location.replace(document.URL + "?" + query);
+            // alert(query);
+            location.replace("http://localhost:3000/movtest?title=" + query);
+        }
+    </script>
+</body>
+
+</html>
