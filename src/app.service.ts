@@ -57,7 +57,6 @@ export class AppService {
   async searchMovie(queryString) : Promise<any[]> {
   try{
     let url = `https://api.themoviedb.org/3/search/movie?api_key=c14286efd49ae138e2d5e2661df06122&query=`+queryString.title;
-    console.log(url);
     const searchConfig = {
       method: 'get',
       url: url,
@@ -65,7 +64,6 @@ export class AppService {
     };
     
     const response = await axios(searchConfig);
-    console.log(response);
     let filtered = response.data.results[0];
     return filtered;
 
