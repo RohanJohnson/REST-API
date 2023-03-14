@@ -1,10 +1,7 @@
-import { Body, Injectable, Query } from '@nestjs/common';
-
-export let myList = ["beanz", "ketchup", "spaghetti hoops"];
-
+import { Body, Injectable, Query, UnsupportedMediaTypeException } from '@nestjs/common';
 import axios from 'axios';
-import { response } from 'express';
-import * as fs from 'fs';
+
+const nodemailer = require("nodemailer");
 
 const config = {
   method: 'get',
@@ -13,30 +10,10 @@ const config = {
   headers: {}
 };
 
-
-
-
-function filterFunc(obj) {
-  if (obj.title == "The Menu")
-    return obj.title;
-}
-
-
-
-
 @Injectable()
 export class AppService {
   getHello(): string {
     return 'Hello World!';
-  }
-
-  getList(): any[] {
-    return myList;
-  }
-
-  addToList(newItem): any[] {
-    myList.push(newItem);
-    return myList;
   }
 
   async getMovie(): Promise<any[]> {
@@ -44,46 +21,54 @@ export class AppService {
     const filtered = response.data.results.map(movie => movie.title);
     return filtered;
 
-  }  
-  
-  async getMovieTest(queryString): Promise<any[]> {
-    const response = await axios(config);
-    const filtered = response.data.results.filter(movie => movie.title == queryString.title);
-    
-    return filtered;
-  
   }
 
-  async searchMovie(queryString) : Promise<any[]> {
-  try{
-    let url = `https://api.themoviedb.org/3/search/movie?api_key=c14286efd49ae138e2d5e2661df06122&query=`+queryString.title;
-    const searchConfig = {
-      method: 'get',
-      url: url,
-      headers: {}
+  async searchMovie(queryString): Promise<any[]> {
+    try {
+      let url = `https://api.themoviedb.org/3/search/movie?api_key=c14286efd49ae138e2d5e2661df06122&query=` + queryString.title;
+      const searchConfig = {
+        method: 'get',
+        url: url,
+        headers: {}
+      };
+
+      const response = await axios(searchConfig);
+      let filtered = response.data.results[0];
+      return filtered;
+
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async sendEmail(address) {
+    console.log(address.query)
+
+    // Create a transporter object
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      auth: {
+        user: 'mateo.hoppe@ethereal.email',
+        pass: 'pvYF6H9tRwxN9ny3Y7'
+      }
+    });
+
+    // Setup email data
+    const mailOptions = {
+      from: "the server",
+      to: address.query,
+      subject: "Test email",
+      text: "This is a test email",
     };
-    
-    const response = await axios(searchConfig);
-    let filtered = response.data.results[0];
-    return filtered;
 
-  }catch(e){
-    console.log(e);
+    // Send email
+    const info = await transporter.sendMail(mailOptions);
+
+    console.log("Message sent: %s", info.messageId);
+
+    return;
   }
-  }
-
-
-
-
-  // async getGames(): Promise<any[]> {
-  //   const filePath = path.join(__dirname, 'gamesAPI.json');
-  //   console.log(filePath);
-  //   const fileData = fs.readFileSync(filePath);
-  //   const data =JSON.parse(fileData.toString());
-  //   console.log(data)
-  //   const filtered = data.games.map(games => games.title);
-  //   return filtered;
-  // }
 
 }
 
